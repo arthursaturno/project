@@ -4,50 +4,39 @@
 // Answer -- user Mocktail
 // How do we control what our dependencies do
 // Answer -- Using the Mocktail's APIs
-
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:project/src/authentication/domain/entities/user.dart';
 import 'package:project/src/authentication/domain/repositories/authentication_repository.dart';
-import 'package:project/src/authentication/domain/usecases/create_user.dart';
+import 'package:project/src/authentication/domain/usecases/get_users.dart';
 
 class MockAuthRepo extends Mock implements AuthenticationRepository {}
 
 void main() {
-  late CreateUser usecase;
+  late GetUsers usecase;
   late AuthenticationRepository repository;
 
   setUp(() {
     repository = MockAuthRepo();
-    usecase = CreateUser(repository);
+    usecase = GetUsers(repository);
   });
 
-  const params = CreateUserParams.empty();
+  const tResponse = [User.empty()];
+
   test(
-    'should call the [AuthRepo.createUser]',
+    'should call the [AuthRepo.getusers] and return [List<User>]',
     () async {
       //Arrange
       //STUB
-      when(
-        () => repository.createUser(
-          createdAt: any(named: 'createdAt'),
-          name: any(named: 'name'),
-          avatar: any(named: 'avatar'),
-        ),
-      ).thenAnswer((_) async => const Right(null));
-
+      when(() => repository.getUsers()).thenAnswer(
+        (_) async => const Right(tResponse),
+      );
       //Act
-      final result = await usecase(params);
+      final result = await usecase();
       //Assert
-      expect(result, equals(const Right<dynamic, void>(null)));
-      verify(
-        () => repository.createUser(
-          createdAt: params.createdAt,
-          name: params.name,
-          avatar: params.avatar,
-        ),
-      ).called(1);
-
+      expect(result, equals(const Right<dynamic, List<User>>(tResponse)));
+      verify(() => repository.getUsers()).called(1);
       verifyNoMoreInteractions(repository);
     },
   );
