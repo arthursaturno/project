@@ -1,3 +1,3 @@
 ## Getting Started
 
-Clean Architecture & TDD BLoC Design Pattern | Código padrão da indústria
+Clean Architecture & TDD BLoC Design Pattern
